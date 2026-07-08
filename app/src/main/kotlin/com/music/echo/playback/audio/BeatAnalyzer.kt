@@ -432,7 +432,7 @@ object BeatAnalyzer {
             val hi = min(numFrames - 1, i + meanWindow)
             var mean = 0f
             for (j in lo..hi) mean += flux[j]
-            mean /= (hi - lo + 1)
+            mean /= hi - lo + 1
             detrended[i] = max(0f, flux[i] - mean)
         }
         return detrended
@@ -456,7 +456,7 @@ object BeatAnalyzer {
 
         var mean = 0f
         for (lag in minLag..maxLag) mean += ac[lag]
-        mean /= (maxLag - minLag + 1)
+        mean /= maxLag - minLag + 1
         if (mean <= 0f) return null
 
         var bestLag = -1
@@ -475,7 +475,7 @@ object BeatAnalyzer {
         if (bestLag < 0) return null
 
         // Parabolic interpolation around the peak for sub-frame period accuracy.
-        val refined = if (bestLag in (minLag + 1) until maxLag) {
+        val refined = if (bestLag in minLag + 1 until maxLag) {
             val y0 = ac[bestLag - 1]
             val y1 = ac[bestLag]
             val y2 = ac[bestLag + 1]

@@ -538,7 +538,7 @@ highlightKey: String? = null) {
                         onClick = { onCrossfadeGaplessChange(!crossfadeGapless) }
                     ))
                     add(Material3SettingsItem(
-    isHighlighted = (highlightKey == stringResource(R.string.automix)),
+                        isHighlighted = highlightKey == stringResource(R.string.automix),
                         icon = painterResource(R.drawable.graphic_eq),
                         title = { Text(stringResource(R.string.automix)) },
                         description = { Text(stringResource(R.string.automix_desc)) },
@@ -561,7 +561,7 @@ highlightKey: String? = null) {
                     ))
                     if (automixCrossfade) {
                         add(Material3SettingsItem(
-    isHighlighted = (highlightKey == stringResource(R.string.automix_debug)),
+                            isHighlighted = highlightKey == stringResource(R.string.automix_debug),
                             icon = painterResource(R.drawable.bug_report),
                             title = { Text(stringResource(R.string.automix_debug)) },
                             description = { Text(stringResource(R.string.automix_debug_desc)) },
