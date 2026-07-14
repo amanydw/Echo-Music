@@ -134,7 +134,7 @@ fun getAllSearchableSettings(): List<Triple<String, String, String>> {
             Triple(stringResource(R.string.enable_high_refresh_rate), "Appearance", "settings/appearance"),
             Triple(stringResource(R.string.enable_high_refresh_rate_desc), "Appearance", "settings/appearance"),
             Triple(stringResource(R.string.enable_kugou), "Content", "settings/content"),
-            Triple(stringResource(R.string.enable_lossless_audio), "Player and audio", "settings/player"),
+
             Triple(stringResource(R.string.enable_lrclib), "Content", "settings/content"),
             Triple(stringResource(R.string.enable_proxy), "Content", "settings/content"),
             Triple(stringResource(R.string.enable_similar_content), "Player and audio", "settings/player"),
@@ -188,7 +188,7 @@ fun getAllSearchableSettings(): List<Triple<String, String, String>> {
             Triple(stringResource(R.string.logout_dialog_title), "Account", "settings/account"),
             Triple(stringResource(R.string.logout_keep_data), "Account", "settings/account"),
             Triple(stringResource(R.string.logs_heading), "Content", "settings/content"),
-            Triple(stringResource(R.string.lossless_audio_warning), "Player and audio", "settings/player"),
+
             Triple(stringResource(R.string.lyrics), "Appearance", "settings/appearance"),
             Triple(stringResource(R.string.lyrics), "Content", "settings/content"),
             Triple(stringResource(R.string.lyrics_animation_metro), "Appearance", "settings/appearance"),

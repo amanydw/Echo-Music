@@ -562,7 +562,14 @@ fun QueueMenu(
                             },
                             onClick = {
                                 refetchIconDegree -= 360
+                                androidx.media3.exoplayer.offline.DownloadService.sendRemoveDownload(context, iad1tya.echo.music.playback.ExoDownloadService::class.java, mediaMetadata.id, false)
+                                val intent = android.content.Intent(context, iad1tya.echo.music.playback.MusicService::class.java).apply {
+                                    action = "iad1tya.echo.music.ACTION_CLEAR_SONG_CACHE"
+                                    putExtra("songId", mediaMetadata.id)
+                                }
+                                context.startService(intent)
                                 coroutineScope.launch(Dispatchers.IO) {
+                                    database.query { deleteFormat(mediaMetadata.id) }
                                     YouTube.queue(listOf(mediaMetadata.id)).onSuccess {
                                         val newSong = it.firstOrNull()
                                         if (newSong != null && librarySong != null) {

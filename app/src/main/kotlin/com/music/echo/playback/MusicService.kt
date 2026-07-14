@@ -2952,6 +2952,8 @@ class MusicService :
                 val isFinalLossless = format.mimeType.contains("flac", ignoreCase = true)
                 val isFinalSaavn = format.mimeType.contains("mp4", ignoreCase = true) || format.mimeType.contains("m4a", ignoreCase = true)
                 
+                var targetCacheKey = mediaId
+                
                 if (dbFormat != null && !shouldBypassCache) {
                     val cacheIsLossless = dbFormat.codecs == "flac"
                     val cacheIsSaavn = dbFormat.codecs == "mp4a.40.2" || dbFormat.mimeType.contains("mp4", ignoreCase = true)
@@ -2970,6 +2972,17 @@ class MusicService :
                             )
                         }
                     }
+                } else if (dbFormat != null && shouldBypassCache) {
+                    val cacheIsLossless = dbFormat.codecs == "flac"
+                    val cacheIsSaavn = dbFormat.codecs == "mp4a.40.2" || dbFormat.mimeType.contains("mp4", ignoreCase = true)
+                    
+                    if (isFinalLossless != cacheIsLossless || isFinalSaavn != cacheIsSaavn) {
+                        Timber.tag(TAG).i("Bypassed cache and fetched different format. Using custom cache key to prevent intercept.")
+                        targetCacheKey = "${mediaId}_diff"
+                    } else {
+                        Timber.tag(TAG).i("Bypassed cache but fallback resulted in cached format. Using original cache key.")
+                        targetCacheKey = mediaId
+                    }
                 }
 
                 val loudnessDb = nonNullPlayback.audioConfig?.loudnessDb
@@ -2980,21 +2993,23 @@ class MusicService :
                     Timber.tag(TAG).w("No loudness data available from YouTube for video: $mediaId")
                 }
 
-                database.query {
-                    upsert(
-                        FormatEntity(
-                            id = mediaId,
-                            itag = format.itag,
-                            mimeType = format.mimeType.split(";")[0],
-                            codecs = format.mimeType.split("codecs=")[1].removeSurrounding("\""),
-                            bitrate = format.bitrate,
-                            sampleRate = format.audioSampleRate,
-                            contentLength = format.contentLength ?: 0L,
-                            loudnessDb = loudnessDb,
-                            perceptualLoudnessDb = perceptualLoudnessDb,
-                            playbackUrl = nonNullPlayback.playbackTracking?.videostatsPlaybackUrl?.baseUrl
+                if (!isFullyDownloaded || targetCacheKey == mediaId) {
+                    database.query {
+                        upsert(
+                            FormatEntity(
+                                id = mediaId,
+                                itag = format.itag,
+                                mimeType = format.mimeType.split(";")[0],
+                                codecs = format.mimeType.split("codecs=")[1].removeSurrounding("\""),
+                                bitrate = format.bitrate,
+                                sampleRate = format.audioSampleRate,
+                                contentLength = format.contentLength ?: 0L,
+                                loudnessDb = loudnessDb,
+                                perceptualLoudnessDb = perceptualLoudnessDb,
+                                playbackUrl = nonNullPlayback.playbackTracking?.videostatsPlaybackUrl?.baseUrl
+                            )
                         )
-                    )
+                    }
                 }
                 scope.launch(Dispatchers.IO) { recoverSong(mediaId, nonNullPlayback) }
 
@@ -3008,7 +3023,7 @@ class MusicService :
                 songUrlCache["${mediaId}_${lockedQuality.name}"] =
                     streamUrl to System.currentTimeMillis() + (nonNullPlayback.streamExpiresInSeconds * 1000L)
                 
-                return@Factory dataSpec.withUri(streamUrl.toUri())
+                return@Factory dataSpec.buildUpon().setKey(targetCacheKey).setUri(streamUrl.toUri()).build()
             }
         }
     }
@@ -3216,6 +3231,14 @@ class MusicService :
             }
             MusicWidgetReceiver.ACTION_UPDATE_WIDGET -> {
                 updateWidgetUI(player.isPlaying)
+            }
+            "iad1tya.echo.music.ACTION_CLEAR_SONG_CACHE" -> {
+                val songId = intent.getStringExtra("songId")
+                if (songId != null) {
+                    songUrlCache.keys.filter { it.startsWith("${songId}_") }.forEach {
+                        songUrlCache.remove(it)
+                    }
+                }
             }
         }
 
