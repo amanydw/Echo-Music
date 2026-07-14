@@ -17,6 +17,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -43,6 +44,7 @@ import iad1tya.echo.music.constants.OpenRouterBaseUrlKey
 import iad1tya.echo.music.constants.OpenRouterModelKey
 import iad1tya.echo.music.constants.TranslateLanguageKey
 import iad1tya.echo.music.constants.TranslateModeKey
+import iad1tya.echo.music.constants.AutoTranslateKey
 import iad1tya.echo.music.ui.component.EnumDialog
 import iad1tya.echo.music.ui.component.Material3SettingsGroup
 import iad1tya.echo.music.ui.component.Material3SettingsItem
@@ -63,6 +65,7 @@ highlightKey: String? = null) {
     var openRouterModel by rememberPreference(OpenRouterModelKey, "google/gemini-2.5-flash-lite")
     var translateLanguage by rememberPreference(TranslateLanguageKey, "en")
     var translateMode by rememberPreference(TranslateModeKey, "Literal")
+    var autoTranslate by rememberPreference(AutoTranslateKey, false)
     var deeplApiKey by rememberPreference(DeeplApiKey, "")
     var deeplFormality by rememberPreference(DeeplFormalityKey, "default")
 
@@ -76,6 +79,7 @@ highlightKey: String? = null) {
         "Mistral" to "https://api.mistral.ai/v1/chat/completions",
         "Nvidia" to "https://integrate.api.nvidia.com/v1/chat/completions",
         "Groq" to "https://api.groq.com/openai/v1/chat/completions",
+        "Puter" to "https://api.puter.com/puterai/openai/v1/chat/completions",
         "DeepL" to "https://api.deepl.com/v2/translate",
         "Custom" to ""
     )
@@ -90,6 +94,7 @@ highlightKey: String? = null) {
         "Mistral" to stringResource(R.string.ai_provider_mistral_help),
         "Nvidia" to stringResource(R.string.ai_provider_nvidia_help),
         "Groq" to stringResource(R.string.ai_provider_groq_help),
+        "Puter" to stringResource(R.string.ai_provider_puter_help),
         "DeepL" to stringResource(R.string.ai_provider_deepl_help),
         "Custom" to ""
     )
@@ -155,6 +160,11 @@ highlightKey: String? = null) {
             "moonshotai/kimi-k2-instruct",
             "qwen/qwen3-32b",
             "gemma2-9b-it"
+        ),
+        "Puter" to listOf(
+            "gpt-4o-mini",
+            "claude-3-5-sonnet-latest",
+            "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo"
         ),
         "DeepL" to listOf(),
         "Custom" to listOf()
@@ -553,6 +563,21 @@ highlightKey: String? = null) {
                         title = { Text(stringResource(R.string.ai_target_language)) },
                         description = { Text(LanguageCodeToName[translateLanguage] ?: translateLanguage) },
                         onClick = { showLanguageDialog = true }
+                    )
+                )
+                add(
+                    Material3SettingsItem(
+    isHighlighted = (highlightKey == stringResource(R.string.ai_auto_translate)),
+                        icon = painterResource(R.drawable.translate),
+                        title = { Text(stringResource(R.string.ai_auto_translate)) },
+                        description = { Text(stringResource(R.string.ai_auto_translate_desc)) },
+                        trailingContent = {
+                            Switch(
+                                checked = autoTranslate,
+                                onCheckedChange = { autoTranslate = it }
+                            )
+                        },
+                        onClick = { autoTranslate = !autoTranslate }
                     )
                 )
             }

@@ -141,16 +141,7 @@ highlightKey: String? = null) {
                     )
                 )
             }
-            if ("echo brain".contains(searchLower)) {
-                add(
-                    Material3SettingsItem(
-    isHighlighted = (highlightKey == "Echo Brain (Beta)"),
-                        icon = painterResource(R.drawable.ic_echo_brain),
-                        title = { Text("Echo Brain (Beta)") },
-                        onClick = { navController.navigate("settings/echo_brain") }
-                    )
-                )
-            }
+
             if (appearanceText.lowercase().contains(searchLower)) {
                 add(
                     Material3SettingsItem(

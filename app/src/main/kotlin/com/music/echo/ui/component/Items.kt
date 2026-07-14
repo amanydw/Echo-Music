@@ -1034,9 +1034,6 @@ fun MediaMetadataListItem(
             )
         },
         badges = {
-            if (mediaMetadata.source == iad1tya.echo.music.models.QueueItemSource.ECHO_BRAIN) {
-                Icon.EchoBrain()
-            }
             if (mediaMetadata.explicit) Icon.Explicit()
         },
         thumbnailContent = {
@@ -1839,17 +1836,6 @@ object Icon {
         )
     }
 
-    @Composable
-    fun EchoBrain() {
-        Icon(
-            imageVector = Icons.Outlined.AutoAwesome,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier
-                .size(18.dp)
-                .padding(end = 2.dp)
-        )
-    }
 }
 
 @Composable
