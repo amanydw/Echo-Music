@@ -159,7 +159,7 @@ fun CreateAiPlaylistDialog(
                             textAlign = TextAlign.Center
                         )
                         Button(onClick = { errorLog = null }) {
-                            Text("Try Again")
+                            Text(stringResource(R.string.try_again))
                         }
                     }
                 }
