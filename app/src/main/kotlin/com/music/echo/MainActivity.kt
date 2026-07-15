@@ -115,6 +115,12 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.changedToDown
+import androidx.compose.ui.input.pointer.positionChange
+import androidx.compose.ui.platform.LocalView
+import android.view.HapticFeedbackConstants
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.util.fastAny
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -525,6 +531,10 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        val (enableHaptics) = rememberPreference(iad1tya.echo.music.constants.EnableHapticsKey, defaultValue = true)
+        val view = LocalView.current
+        var lastScrollHapticTime by remember { mutableStateOf(0L) }
+
         echomusicTheme(
             darkTheme = useDarkTheme,
             pureBlack = pureBlack,
@@ -534,6 +544,26 @@ class MainActivity : ComponentActivity() {
                 modifier = Modifier
                     .fillMaxSize()
                     .background(if (pureBlack) Color.Black else MaterialTheme.colorScheme.surface)
+                    .pointerInput(enableHaptics) {
+                        if (enableHaptics) {
+                            awaitPointerEventScope {
+                                while (true) {
+                                    val event = awaitPointerEvent(androidx.compose.ui.input.pointer.PointerEventPass.Initial)
+                                    val isClick = event.changes.any { it.changedToDown() }
+                                    val isScroll = event.changes.any { it.positionChange() != Offset.Zero && it.pressed }
+                                    if (isClick) {
+                                        view.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK)
+                                    } else if (isScroll) {
+                                        val currentTime = System.currentTimeMillis()
+                                        if (currentTime - lastScrollHapticTime > 100) {
+                                            view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+                                            lastScrollHapticTime = currentTime
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
             ) {
                 val focusManager = LocalFocusManager.current
                 val density = LocalDensity.current

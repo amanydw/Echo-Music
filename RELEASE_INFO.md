@@ -1,5 +1,6 @@
 # Echo Music v5.2.6
 
+- Added a global haptics option in Appearance settings for providing haptic feedback during interactions and scrolling.
 - Fixed an issue where the app's internal volume could get permanently stuck in a lowered state after restoring playback state.
 - Audio quality switches (e.g. standard to Lossless) now apply immediately rather than persisting an old cached stream format.
 - Moved the "Import from Spotify" option directly into the main Backup & Restore page, and added support for importing public playlists via link without requiring a Spotify login.

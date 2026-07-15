@@ -289,7 +289,9 @@
     <string name="apple_music">Apple Music</string>
     <string name="squiggly">Squiggly</string>
     <string name="misc">Misc</string>
-    
+    <string name="enable_haptics">Enable haptics</string>
+    <string name="enable_haptics_desc">Provide haptic feedback while scrolling, clicking, and interacting with the app</string>
+
     <string name="activity_history">Listening Summary</string>
     <string name="total_listening_time">Total Listening Time</string>
     <string name="unique_songs">Unique Songs</string>
